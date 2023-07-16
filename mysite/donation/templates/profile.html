@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+{% block header %}
+    <header class="header--form-page">
+        {% include "header.html" %}
+        <div class="profile-container">
+            <h1>Informacje o użytkowniku</h1>
+            <img src="{% static 'images/decoration.svg' %}" style="width: 100%">
+            <p><strong>Imię:</strong> {{ user.first_name }}</p>
+            <p><strong>Nazwisko:</strong> {{ user.last_name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+        </div>
+    </header>
+{% endblock %}
+{% block content %}
+    {% if donations %}
+    <section id="help" class="help">
+        <h2>Twoja pomoc</h2>
+        <div class="help--slides active" data-id="1">
+            <ul class="help--slides-items">
+                {% for donate in donations %}
+                    <li>
+                        <div class="col">
+                            <a href="{% url 'donate_details' pk=donate.id %}" class="donations-profile" onmouseover="this.style.color='blue'"
+                               onmouseout="this.style.color='black'">
+                                <div class="title">Fundacja "{{ donate.institution.name }}"</div>
+                                <div class="subtitle">
+                                    Ilość worków: {{ donate.quantity }},
+                                    status: {{ donate.is_taken | yesno:'zabrany, niezabrany' }}
+                                    {% if donate.is_taken %}{{ donate.status_change_date }}{% endif %}
+                                </div>
+                            </a>
+                        </div>
+
+
+                        <div class="col">
+                            <div class="title">
+                                Data: {{ donate.pick_up_date }} {{ donate.pick_up_time }}
+                            </div>
+                            <div class="subtitle">
+                                Co zostało przekazane:
+                                {% for category in donate.categories.all %}
+                                    {{ category }}{% if category != donate.categories.last %},{% endif %}
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                        <form method="post">
+                            {% csrf_token %}
+                            <label>Zmień status na:</label>
+                            <button type=submit name="change" value="{{ donate.id }}" class="btn btn--small"
+                                    style="width: 84.45px; {% if donate.is_taken %}background-color: lightgray{% endif %}">{{ donate.is_taken | yesno:'niezabrany, zabrany' }}</button>
+                        </form>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </section>
+    {% endif %}
+{% endblock %}
