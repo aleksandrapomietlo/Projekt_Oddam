@@ -1,1 +1,1 @@
-# Projekt_Oddam
+Celem projektu jest stworzenie aplikacji do przekazywania daróœ wybranym instytucjom
